@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const cors = require('cors');
 require('dotenv').config()
+// const { MongoClient, ServerApiVersion } = require('mongodb');
 var MongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectId;
 const port = process.env.PORT || 5000
@@ -10,10 +11,12 @@ const port = process.env.PORT || 5000
 app.use(cors())
 app.use(express.json())
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.tz5xn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+// const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.tz5xn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+
+var uri = `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0-shard-00-00.tz5xn.mongodb.net:27017,cluster0-shard-00-01.tz5xn.mongodb.net:27017,cluster0-shard-00-02.tz5xn.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-8i0l2i-shard-0&authSource=admin&retryWrites=true&w=majority`;
 console.log(uri)
 
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true,  });
 
 async function run() {
     try{
@@ -39,13 +42,34 @@ async function run() {
         res.send(cars)
       });
 
+      app.get('/orders/:id', async(req, res) =>{
+        const id = req?.params?.id;
+        const query = {_id: ObjectId(id)}
+        const result = await carsCollection.findOne(query)
+        res.json(result)
+      })
+
       app.get('/orders', async(req, res) =>{
-        const email = req.query.email;
-        const query = {email: email}
-        console.log(query)
-        const cursor = ordersCollection.find(query);
-        const order = cursor.toArray();
-        res.json(order)
+
+        const cursor = ordersCollection.find({});
+        const Orders = await cursor.toArray();
+        res.send(Orders)
+   
+      });
+
+      app.get('/orders/:email', async(req, res) =>{
+        const result = await ordersCollection
+        .find({email: req?.params?.email})
+        .toArray();
+        res.json(result)
+   
+        // const email = req?.params?.email;
+        // const query = {email: email}
+        // console.log(query)
+        // const cursor = ordersCollection.find(query);
+        // const order = cursor.toArray();
+        // res.json(order)
+        // console.log(order)
       });
 
       app.get('/users/:email', async(req, res) =>{
