@@ -42,12 +42,12 @@ async function run() {
         res.send(cars)
       });
 
-      app.get('/orders/:id', async(req, res) =>{
-        const id = req?.params?.id;
-        const query = {_id: ObjectId(id)}
-        const result = await ordersCollection.findOne(query)
-        res.json(result)
-      })
+      // app.get('/orders/:id', async(req, res) =>{
+      //   const id = req?.params?.id;
+      //   const query = {_id: ObjectId(id)}
+      //   const result = await ordersCollection.findOne(query)
+      //   res.json(result)
+      // })
 
       app.get('/orders', async(req, res) =>{
 
@@ -61,15 +61,8 @@ async function run() {
         const result = await ordersCollection
         .find({email: req?.params?.email})
         .toArray();
+        console.log(result)
         res.json(result)
-   
-        // const email = req?.params?.email;
-        // const query = {email: email}
-        // console.log(query)
-        // const cursor = ordersCollection.find(query);
-        // const order = cursor.toArray();
-        // res.json(order)
-        // console.log(order)
       });
 
       app.get('/users/:email', async(req, res) =>{
