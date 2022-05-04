@@ -45,7 +45,7 @@ async function run() {
       app.get('/orders/:id', async(req, res) =>{
         const id = req?.params?.id;
         const query = {_id: ObjectId(id)}
-        const result = await carsCollection.findOne(query)
+        const result = await ordersCollection.findOne(query)
         res.json(result)
       })
 
@@ -73,7 +73,7 @@ async function run() {
       });
 
       app.get('/users/:email', async(req, res) =>{
-        const email = req.params.email;
+        const email = req?.params?.email;
         const query ={email: email };
          const user = await userCollection.findOne(query);
          let isAdmin = false;
@@ -99,7 +99,7 @@ async function run() {
       })
       // saved user
       app.post('/users', async (req, res) =>{
-        const user = req.body;
+        const user = req?.body;
         const result = await userCollection.insertOne(user);
         console.log(result)
         res.json(result);
